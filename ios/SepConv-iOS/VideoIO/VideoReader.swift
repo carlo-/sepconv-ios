@@ -26,6 +26,17 @@ class VideoReader {
         return videoTrack?.minFrameDuration
     }
     
+    var videoDuration: Double {
+        return asset.duration.seconds
+    }
+    
+    var numberOfFrames: Int? {
+        if let rate = frameRate {
+           return Int(videoDuration * Double(rate))
+        }
+        return nil
+    }
+    
     var done: Bool {
         if currentTime.isValid {
             return currentTime.seconds >= asset.duration.seconds
@@ -59,9 +70,11 @@ class VideoReader {
     }
     
     @discardableResult
-    func nextFrame() throws -> CGImage {
+    func nextFrame() throws -> CGImage? {
         if currentTime.isValid == false {
             currentTime = .zero
+        } else if done {
+            return nil
         } else {
             advanceTime()
         }
@@ -76,7 +89,7 @@ class VideoReader {
         }
         if done == false, let a = latestFrame {
             let b = try nextFrame()
-            return (a, b)
+            return (a, b!)
         }
         return nil
     }

@@ -20,6 +20,10 @@ class VideoWriter {
         return CMTime(value: 1, timescale: CMTimeScale(frameRate))
     }
     
+    var cancelled: Bool {
+        return self.assetWriter.status == .cancelled
+    }
+    
     private let queue: FrameQueue
     private var assetWriter: AVAssetWriter!
     private var writerInput: AVAssetWriterInput!
@@ -47,12 +51,18 @@ class VideoWriter {
     
     func enqueueFrame(_ image: CGImage) {
         guard assetWriter.status == .writing || assetWriter.status == .unknown else {
-            fatalError("Writer already finished session.")
+            print("Writer already finished session.")
+            return
         }
         queue.put(image)
     }
     
     func finishWriting() {
+        self.queue.signalTermination()
+    }
+    
+    func cancelWriting() {
+        assetWriter.cancelWriting()
         self.queue.signalTermination()
     }
     
@@ -103,7 +113,12 @@ class VideoWriter {
                 }
             }
             
-            if (done) {
+            if self.cancelled {
+                self.writerInput.markAsFinished()
+                return
+            }
+            
+            if done {
                 self.writerInput.markAsFinished()
                 self.assetWriter.finishWriting {
                     if let error = self.assetWriter.error {
