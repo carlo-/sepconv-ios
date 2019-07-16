@@ -22,7 +22,14 @@ class VideoReader {
         return videoTrack?.nominalFrameRate
     }
     
-    var frameDuration: CMTime? {
+    var nominalFrameDuration: CMTime? {
+        if let frameRate = frameRate {
+            return CMTime(value: 10_000, timescale: CMTimeScale(frameRate * 10_000))
+        }
+        return nil
+    }
+    
+    var minFrameDuration: CMTime? {
         return videoTrack?.minFrameDuration
     }
     
@@ -44,6 +51,10 @@ class VideoReader {
         return false
     }
     
+    var canReadSequentially: Bool {
+        return nominalFrameDuration != nil
+    }
+    
     private var latestFrame: CGImage?
     private var currentTime: CMTime = .invalid
     private var generator: AVAssetImageGenerator
@@ -58,7 +69,7 @@ class VideoReader {
     }
     
     private func advanceTime() {
-        currentTime = CMTimeAdd(currentTime, frameDuration ?? .zero)
+        currentTime = CMTimeAdd(currentTime, nominalFrameDuration ?? .zero)
     }
     
     func seek() {

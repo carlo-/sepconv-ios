@@ -8,6 +8,9 @@
 
 import UIKit
 import CoreML
+import AVFoundation
+import Photos
+import MobileCoreServices
 
 
 class ViewController: UIViewController {
@@ -27,9 +30,21 @@ class ViewController: UIViewController {
     private var videoReader: VideoReader?
     private var selectedVideoURL: URL?
     
+    private lazy var imagePickerController: UIImagePickerController = {
+        let picker = UIImagePickerController()
+        picker.sourceType = .photoLibrary
+        picker.delegate = self
+        picker.mediaTypes = ["public.video", "public.movie"]
+        return picker
+    }()
+    
     var documentsDirectory: URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return paths[0]
+    }
+    
+    var outputURL: URL {
+        return documentsDirectory.appendingPathComponent("output_video.mp4")
     }
     
     private enum State {
@@ -90,16 +105,11 @@ class ViewController: UIViewController {
     }
     
     @IBAction func importPressed(_ sender: Any? = nil) {
-        // TODO: ask to pick video
-        // ...
-        
-        selectedVideoURL = Bundle.main.url(forResource: "testVideo1", withExtension: "mov")!
-        update(for: .imported)
+        present(imagePickerController, animated: true)
     }
     
     @IBAction func exportPressed(_ sender: Any? = nil) {
-        // TODO: export video
-        // ...
+        exportResultViaShareSheet()
     }
     
     private func stopInterpolation() {
@@ -133,12 +143,22 @@ class ViewController: UIViewController {
         var nDone = 0
         
         let outputFrameRate = videoReader.frameRate! * 2
-        let outputURL = documentsDirectory.appendingPathComponent("output_video.mp4")
+        let outputURL = self.outputURL
         try? FileManager().removeItem(at: outputURL)
         
         DispatchQueue(label: "interpolationQueue").async { [weak self] in
             while videoReader.done == false {
-                if let (rawA, rawB) = try? videoReader.nextFrameCouple() {
+                
+                let rawFrames: (CGImage, CGImage)?
+                
+                do {
+                    rawFrames = try videoReader.nextFrameCouple()
+                } catch {
+                    print("Error: nextFrameCouple() failed. Details: \(error.localizedDescription)")
+                    break
+                }
+                
+                if let (rawA, rawB) = rawFrames {
                     
                     let frameA: CGImage
                     let frameB: CGImage
@@ -149,7 +169,7 @@ class ViewController: UIViewController {
                         frameB = try network.preprocess(frame: rawB)
                         res = try network.interpolate(frameA: frameA, frameB: frameB)
                     } catch {
-                        print("Error!", error)
+                        print("Error: interpolation failed. Details: \(error.localizedDescription)")
                         break
                     }
                     
@@ -179,7 +199,7 @@ class ViewController: UIViewController {
                     }
                     
                 } else {
-                    print("Error!")
+                    print("nextFrameCouple() returned nil.")
                 }
                 
                 if self?.videoWriter == nil || self?.videoWriter?.cancelled == true {
@@ -197,6 +217,111 @@ class ViewController: UIViewController {
                 writer.finishWriting()
                 DispatchQueue.main.sync {
                     self?.update(for: .completed)
+                }
+            }
+        }
+    }
+}
+
+extension ViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+//        let loadingAlert = UIAlertController(title: "Loading...", message: nil, preferredStyle: .alert)
+        let errorAlert = UIAlertController(title: "Oops!", message: nil, preferredStyle: .alert)
+        errorAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: { _ in
+            picker.dismiss(animated: true)
+        }))
+        
+        guard let mediaType = info[.mediaType] as? String,
+              (mediaType == (kUTTypeVideo as String) || mediaType == (kUTTypeMovie as String)) else {
+            errorAlert.message = "Video format not supported."
+            picker.present(errorAlert, animated: true)
+            return
+        }
+        
+        guard let mediaURL = info[.mediaURL] as? URL  else {
+            errorAlert.message = "Something went wrong."
+            picker.present(errorAlert, animated: true)
+            return
+        }
+        
+        selectedVideoURL = mediaURL
+        picker.dismiss(animated: true) { [weak self] in
+            self?.update(for: .imported)
+        }
+        
+        // This should be the proper way, but it doesn't seem to work...
+        
+//        picker.present(loadingAlert, animated: true)
+//
+//        let options = PHVideoRequestOptions()
+//        options.version = .original
+//
+//        PHImageManager.default().requestAVAsset(forVideo: phAsset, options: options) { [weak self] asset, audioMix, info in
+//            DispatchQueue.main.async {
+//                if let url = (asset as? AVURLAsset)?.url {
+//                    self?.selectedVideoURL = url
+//                    self?.update(for: .imported)
+//                    loadingAlert.dismiss(animated: true) {
+//                        picker.dismiss(animated: true)
+//                    }
+//                } else {
+//                    errorAlert.message = "Something went wrong!"
+//                    loadingAlert.dismiss(animated: true) {
+//                        picker.present(errorAlert, animated: true)
+//                    }
+//                }
+//            }
+//        }
+    }
+}
+
+extension ViewController {
+    
+    func exportResultViaShareSheet() {
+        let activityVC = UIActivityViewController(activityItems: [outputURL], applicationActivities: nil)
+        present(activityVC, animated: true)
+    }
+    
+    func exportResultToLibrary() {
+        
+        let outputURL = self.outputURL
+        
+        let loadingAlert = UIAlertController(title: "Loading...", message: nil, preferredStyle: .alert)
+        
+        let errorAlert = UIAlertController(title: "Oops!", message: nil, preferredStyle: .alert)
+        errorAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        
+        let successAlert = UIAlertController(title: "Success!", message: nil, preferredStyle: .alert)
+        successAlert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
+        
+        present(loadingAlert, animated: true)
+        
+        PHPhotoLibrary.requestAuthorization { [weak self] status in
+            
+            guard status == .authorized else {
+                loadingAlert.dismiss(animated: true) {
+                    errorAlert.message = "App not authorized to access the photo library."
+                    self?.present(errorAlert, animated: true)
+                }
+                return
+            }
+            
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: outputURL)
+            }) { success, error in
+                DispatchQueue.main.async {
+                    loadingAlert.dismiss(animated: true) {
+                        
+                        if success {
+                            self?.present(successAlert, animated: true)
+                        } else {
+                            errorAlert.message = error?.localizedDescription ?? "Something went wrong!"
+                            self?.present(errorAlert, animated: true)
+                        }
+                    }
                 }
             }
         }

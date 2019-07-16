@@ -16,7 +16,6 @@
 		60946CF622D776AB00FC0636 /* SeparableConvolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60946CF522D776AB00FC0636 /* SeparableConvolution.swift */; };
 		60946CF822D78ED300FC0636 /* SepConvNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60946CF722D78ED300FC0636 /* SepConvNetwork.swift */; };
 		60946CFC22D9FFEC00FC0636 /* VideoReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60946CFB22D9FFEC00FC0636 /* VideoReader.swift */; };
-		60946CFE22DA107700FC0636 /* testVideo1.mov in Resources */ = {isa = PBXBuildFile; fileRef = 60946CFD22DA107700FC0636 /* testVideo1.mov */; };
 		60946D0122DA47F900FC0636 /* VideoWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60946D0022DA47F800FC0636 /* VideoWriter.swift */; };
 		60946D1722DB778C00FC0636 /* SepConvPartialNetwork128.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 60946D1322DB778B00FC0636 /* SepConvPartialNetwork128.mlmodel */; };
 		60946D1822DB778C00FC0636 /* SepConvPartialNetwork512.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 60946D1422DB778C00FC0636 /* SepConvPartialNetwork512.mlmodel */; };
@@ -39,7 +38,6 @@
 		60946CF522D776AB00FC0636 /* SeparableConvolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeparableConvolution.swift; sourceTree = "<group>"; };
 		60946CF722D78ED300FC0636 /* SepConvNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SepConvNetwork.swift; sourceTree = "<group>"; };
 		60946CFB22D9FFEC00FC0636 /* VideoReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReader.swift; sourceTree = "<group>"; };
-		60946CFD22DA107700FC0636 /* testVideo1.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = testVideo1.mov; sourceTree = "<group>"; };
 		60946D0022DA47F800FC0636 /* VideoWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWriter.swift; sourceTree = "<group>"; };
 		60946D1322DB778B00FC0636 /* SepConvPartialNetwork128.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SepConvPartialNetwork128.mlmodel; sourceTree = "<group>"; };
 		60946D1422DB778C00FC0636 /* SepConvPartialNetwork512.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SepConvPartialNetwork512.mlmodel; sourceTree = "<group>"; };
@@ -86,7 +84,6 @@
 				60946D1C22DB7C3F00FC0636 /* Utilities */,
 				60946D0222DB5CCD00FC0636 /* Models */,
 				60946D2422DB7FC200FC0636 /* Supporting Files */,
-				60946CFD22DA107700FC0636 /* testVideo1.mov */,
 			);
 			path = "SepConv-iOS";
 			sourceTree = "<group>";
@@ -211,7 +208,6 @@
 			files = (
 				60946CE822D7522F00FC0636 /* LaunchScreen.storyboard in Resources */,
 				60946CE522D7522F00FC0636 /* Assets.xcassets in Resources */,
-				60946CFE22DA107700FC0636 /* testVideo1.mov in Resources */,
 				60946CE322D7522F00FC0636 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
