@@ -51,6 +51,39 @@ class ViewController: UIViewController {
         case idle, imported, completed, processing
     }
     
+    private struct ProgressReport {
+        let progress: Float
+        let rate: Double
+        let timeRemaining: TimeInterval
+        
+        init(done: Int, total: Int, tick: DispatchTime) {
+            precondition(done >= 0 && total > 0)
+            precondition(done <= total)
+            
+            let progress = Float(done) / Float(total)
+            let elapsed = tick.secondsUpToNow
+            let rate = Double(done) / elapsed
+            let remaining = Double(total - done) / rate
+            
+            self = .init(
+                progress: progress,
+                rate: rate,
+                timeRemaining: remaining
+            )
+        }
+        
+        init(progress: Float, rate: Double, timeRemaining: TimeInterval) {
+            self.progress = progress
+            self.rate = rate
+            self.timeRemaining = timeRemaining
+        }
+        
+        var description: String {
+            let roundedRate = round(rate * 10) / 10
+            return "\(Int(progress * 100))% done. \(roundedRate) FPS. \(Int(timeRemaining))s remaining."
+        }
+    }
+    
     private var state: State = .idle
 
     override func viewDidLoad() {
@@ -58,7 +91,7 @@ class ViewController: UIViewController {
         update(for: .idle)
     }
     
-    private func update(for state: ViewController.State, progress: Float? = nil) {
+    private func update(for state: ViewController.State, report: ProgressReport? = nil) {
         switch state {
         case .idle:
             leftImageView.image = nil
@@ -90,8 +123,8 @@ class ViewController: UIViewController {
             exportButton.isEnabled = false
             importButton.isEnabled = false
             startStopButton.isEnabled = true
-            progressView.progress = progress ?? 0
-            statusLabel.text = "Processing. \((progress ?? 0) * 100)% done."
+            progressView.progress = report?.progress ?? 0
+            statusLabel.text = "Processing. \(report?.description ?? "")"
         }
         self.state = state
     }
@@ -138,6 +171,7 @@ class ViewController: UIViewController {
         videoReader = VideoReader(url: selectedVideoURL)
         guard let videoReader = videoReader else { return }
         
+        let tick = DispatchTime.now()
         let nFrames = videoReader.numberOfFrames
         let nInterps = nFrames?.advanced(by: -1)
         var nDone = 0
@@ -145,6 +179,15 @@ class ViewController: UIViewController {
         let outputFrameRate = videoReader.frameRate! * 2
         let outputURL = self.outputURL
         try? FileManager().removeItem(at: outputURL)
+        
+        print("""
+        Starting interpolation with:
+            · Input frames: \(nFrames?.description ?? "?")
+            · Output frames: \(nFrames?.advanced(by: nInterps ?? 0).description ?? "?")
+            · Input frame rate: \(videoReader.frameRate?.description ?? "?")
+            · Output frame rate: \(outputFrameRate)
+            · Num. interpolations: \(nInterps?.description ?? "?")
+        """)
         
         DispatchQueue(label: "interpolationQueue").async { [weak self] in
             while videoReader.done == false {
@@ -177,16 +220,16 @@ class ViewController: UIViewController {
                         let outputFrameSize = CGSize(width: res.width, height: res.height)
                         self?.videoWriter = try! VideoWriter(url: outputURL, frameSize: outputFrameSize, frameRate: Int(outputFrameRate))
                         self?.videoWriter?.startWriting()
+                        self?.videoWriter?.enqueueFrame(frameA)
                     }
                     
-                    self?.videoWriter?.enqueueFrame(frameA)
                     self?.videoWriter?.enqueueFrame(res)
                     self?.videoWriter?.enqueueFrame(frameB)
                     
                     nDone += 1
-                    var progress: Float?
+                    var report: ProgressReport?
                     if let total = nInterps {
-                        progress = Float(nDone) / Float(total)
+                        report = ProgressReport(done: nDone, total: total, tick: tick)
                     }
                     
                     DispatchQueue.main.sync {
@@ -194,7 +237,7 @@ class ViewController: UIViewController {
                             self?.leftImageView.image = UIImage(cgImage: frameA)
                             self?.centerImageView.image = UIImage(cgImage: res)
                             self?.rightImageView.image = UIImage(cgImage: frameB)
-                            self?.update(for: .processing, progress: progress)
+                            self?.update(for: .processing, report: report)
                         }
                     }
                     
@@ -325,5 +368,24 @@ extension ViewController {
                 }
             }
         }
+    }
+}
+
+private extension DispatchTime {
+    
+    var uptimeSeconds: TimeInterval {
+        return Double(uptimeNanoseconds) / 1_000_000_000
+    }
+    
+    func seconds(since time: DispatchTime) -> TimeInterval {
+        return self.uptimeSeconds - time.uptimeSeconds
+    }
+    
+    func seconds(upTo time: DispatchTime) -> TimeInterval {
+        return time.uptimeSeconds - self.uptimeSeconds
+    }
+    
+    var secondsUpToNow: TimeInterval {
+        return seconds(upTo: .now())
     }
 }

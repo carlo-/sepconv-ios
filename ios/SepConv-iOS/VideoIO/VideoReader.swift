@@ -39,20 +39,25 @@ class VideoReader {
     
     var numberOfFrames: Int? {
         if let rate = frameRate {
-           return Int(videoDuration * Double(rate))
+           return Int(videoDuration * Double(rate)) + 1
         }
         return nil
     }
     
     var done: Bool {
         if currentTime.isValid {
-            return currentTime.seconds >= asset.duration.seconds
+            return (currentTime.seconds >= videoDuration ||
+                    nextTime.seconds > videoDuration)
         }
         return false
     }
     
     var canReadSequentially: Bool {
         return nominalFrameDuration != nil
+    }
+    
+    private var nextTime: CMTime {
+        return CMTimeAdd(currentTime, nominalFrameDuration ?? .zero)
     }
     
     private var latestFrame: CGImage?
@@ -69,7 +74,7 @@ class VideoReader {
     }
     
     private func advanceTime() {
-        currentTime = CMTimeAdd(currentTime, nominalFrameDuration ?? .zero)
+        currentTime = nextTime
     }
     
     func seek() {

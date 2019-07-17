@@ -16,6 +16,8 @@ class VideoWriter {
     let frameSize: CGSize
     let frameRate: Int
     
+    private(set) var enqueuedFrames: Int = 0
+    
     var frameDuration: CMTime {
         return CMTime(value: 1, timescale: CMTimeScale(frameRate))
     }
@@ -55,6 +57,7 @@ class VideoWriter {
             return
         }
         queue.put(image)
+        enqueuedFrames += 1
     }
     
     func finishWriting() {

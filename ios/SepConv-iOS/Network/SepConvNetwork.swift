@@ -22,7 +22,7 @@ enum SepConvError: Error {
 
 class SepConvNetwork {
     
-    private let partialNetwork: SepConvPartialNetwork128
+    private let partialNetwork: SepConvPartialNetwork512
     private let separableConvolution: SeparableConvolution
     
     private var filterLength: Int {
