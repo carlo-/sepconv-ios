@@ -1,4 +1,6 @@
-# sepconv-ios
+# _Video Frame Interpolation via Adaptive Separable Convolution_ on iOS (CoreML + Metal)
+
+![Platforms](https://img.shields.io/badge/platform-iOS-lightgrey.svg) ![Swift Version](https://img.shields.io/badge/swift-5.0-orange.svg) ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 -------
 ## License
