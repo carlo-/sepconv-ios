@@ -46,6 +46,7 @@
 		60946D1D22DB7CC800FC0636 /* CoreGraphics+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreGraphics+Extensions.swift"; sourceTree = "<group>"; };
 		60946D1F22DB7D3E00FC0636 /* CoreML+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreML+Extensions.swift"; sourceTree = "<group>"; };
 		60946D2122DB7D6700FC0636 /* MetalKit+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MetalKit+Extensions.swift"; sourceTree = "<group>"; };
+		60F6908722E0950700D1EA3A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +63,7 @@
 		60946CD122D7522E00FC0636 = {
 			isa = PBXGroup;
 			children = (
+				60F6908722E0950700D1EA3A /* README.md */,
 				60946CDC22D7522F00FC0636 /* SepConv-iOS */,
 				60946CDB22D7522F00FC0636 /* Products */,
 			);

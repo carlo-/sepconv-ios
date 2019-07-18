@@ -20,9 +20,26 @@ enum SepConvError: Error {
     case cannotAllocateVideoMemory
 }
 
+enum SepConvNetworkSize: CaseIterable {
+    case x128, x256, x512, x1024
+    
+    var description: String {
+        switch self {
+        case .x128:
+            return "128x128"
+        case .x256:
+            return "256x256"
+        case .x512:
+            return "512x512"
+        case .x1024:
+            return "1024x1024"
+        }
+    }
+}
+
 class SepConvNetwork {
     
-    private let partialNetwork: SepConvPartialNetwork512
+    private let partialNetwork: SepConvPartialNetwork
     private let separableConvolution: SeparableConvolution
     
     private var filterLength: Int {
@@ -41,13 +58,26 @@ class SepConvNetwork {
         return networkInputSide - filterLength
     }
     
-    init() {
-        partialNetwork = .init()
+    private init(partialNetwork: SepConvPartialNetwork) {
+        self.partialNetwork = partialNetwork
         separableConvolution = SeparableConvolution(
             filterLength: partialNetwork.filterLength,
             networkInputSide: partialNetwork.inputSide,
             imageDepth: partialNetwork.imageDepth
         )
+    }
+    
+    convenience init(size: SepConvNetworkSize) {
+        switch size {
+        case .x128:
+            self.init(partialNetwork: SepConvPartialNetwork128())
+        case .x256:
+            self.init(partialNetwork: SepConvPartialNetwork256())
+        case .x512:
+            self.init(partialNetwork: SepConvPartialNetwork512())
+        case .x1024:
+            self.init(partialNetwork: SepConvPartialNetwork1024())
+        }
     }
     
     func prepare() throws {
@@ -99,7 +129,7 @@ class SepConvNetwork {
             paddedInput = input
         }
         
-        let partialOutput = try partialNetwork.prediction(input_frames: paddedInput)
+        let partialOutput = try partialNetwork.forward(paddedInput)
         
         let output1 = try separableConvolution.forward(
             input: partialOutput.padded_i1,
@@ -177,15 +207,31 @@ class SepConvNetwork {
 
 // MARK: - SepConvPartialNetwork Protocol
 
-protocol SepConvPartialNetwork {
+private protocol SepConvPartialNetworkOutput {
+    var padded_i1: MLMultiArray { get }
+    var k1v: MLMultiArray { get }
+    var k1h: MLMultiArray { get }
+    var padded_i2: MLMultiArray { get }
+    var k2v: MLMultiArray { get }
+    var k2h: MLMultiArray { get }
+}
+
+extension SepConvPartialNetwork128Output: SepConvPartialNetworkOutput {}
+extension SepConvPartialNetwork256Output: SepConvPartialNetworkOutput {}
+extension SepConvPartialNetwork512Output: SepConvPartialNetworkOutput {}
+extension SepConvPartialNetwork1024Output: SepConvPartialNetworkOutput {}
+
+private protocol SepConvPartialNetwork {
     var inputShape: [NSNumber] { get }
     var filterLength: Int { get }
     var inputSide: Int { get }
     var imageDepth: Int { get }
     var model: MLModel { get }
+    
+    func forward(_ inputFrames: MLMultiArray) throws -> SepConvPartialNetworkOutput
 }
 
-extension SepConvPartialNetwork {
+private extension SepConvPartialNetwork {
     
     var inputShape: [NSNumber] {
         let inputDescription = model.modelDescription.inputDescriptionsByName["input_frames"]!
@@ -205,10 +251,26 @@ extension SepConvPartialNetwork {
     }
 }
 
-extension SepConvPartialNetwork128: SepConvPartialNetwork {}
-extension SepConvPartialNetwork256: SepConvPartialNetwork {}
-extension SepConvPartialNetwork512: SepConvPartialNetwork {}
-extension SepConvPartialNetwork1024: SepConvPartialNetwork {}
+extension SepConvPartialNetwork128: SepConvPartialNetwork {
+    fileprivate func forward(_ inputFrames: MLMultiArray) throws -> SepConvPartialNetworkOutput {
+        return try prediction(input_frames: inputFrames)
+    }
+}
+extension SepConvPartialNetwork256: SepConvPartialNetwork {
+    fileprivate func forward(_ inputFrames: MLMultiArray) throws -> SepConvPartialNetworkOutput {
+        return try prediction(input_frames: inputFrames)
+    }
+}
+extension SepConvPartialNetwork512: SepConvPartialNetwork {
+    fileprivate func forward(_ inputFrames: MLMultiArray) throws -> SepConvPartialNetworkOutput {
+        return try prediction(input_frames: inputFrames)
+    }
+}
+extension SepConvPartialNetwork1024: SepConvPartialNetwork {
+    fileprivate func forward(_ inputFrames: MLMultiArray) throws -> SepConvPartialNetworkOutput {
+        return try prediction(input_frames: inputFrames)
+    }
+}
 
 
 // MARK: - Input Padding

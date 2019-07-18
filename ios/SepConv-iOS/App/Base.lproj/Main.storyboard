@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="VAt-BV-WxP">
-    <device id="retina5_5" orientation="portrait">
+    <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
@@ -15,23 +15,23 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="SepConv_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="mt7-oz-Seh">
-                                <rect key="frame" x="0.0" y="84" width="414" height="426"/>
+                                <rect key="frame" x="0.0" y="108" width="375" height="387"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="M6f-qc-jjx">
-                                        <rect key="frame" x="0.0" y="0.0" width="414" height="203"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="375" height="183.66666666666666"/>
                                         <subviews>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="left256" translatesAutoresizingMaskIntoConstraints="NO" id="lhm-J3-Caa">
-                                                <rect key="frame" x="0.0" y="0.0" width="203" height="203"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lhm-J3-Caa">
+                                                <rect key="frame" x="0.0" y="0.0" width="183.66666666666666" height="183.66666666666666"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="lhm-J3-Caa" secondAttribute="height" id="bHY-EL-XBR"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="right256" translatesAutoresizingMaskIntoConstraints="NO" id="Zx0-hh-uae">
-                                                <rect key="frame" x="211" y="0.0" width="203" height="203"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Zx0-hh-uae">
+                                                <rect key="frame" x="191.66666666666663" y="0.0" width="183.33333333333337" height="183.66666666666666"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" secondItem="Zx0-hh-uae" secondAttribute="height" id="ZgD-qo-Xr7"/>
                                                 </constraints>
@@ -42,7 +42,7 @@
                                         </constraints>
                                     </stackView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="s6e-D4-Ypz">
-                                        <rect key="frame" x="105.66666666666669" y="223" width="203" height="203"/>
+                                        <rect key="frame" x="95.666666666666686" y="203.66666666666669" width="183.66666666666663" height="183.33333333333331"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="s6e-D4-Ypz" secondAttribute="height" id="9Bz-0e-viY"/>
                                         </constraints>
@@ -50,10 +50,10 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalCentering" spacing="5" translatesAutoresizingMaskIntoConstraints="NO" id="59Q-uH-J8o">
-                                <rect key="frame" x="20" y="645.66666666666663" width="374" height="70.333333333333371"/>
+                                <rect key="frame" x="20" y="687.66666666666663" width="335" height="70.333333333333371"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Import a video to start" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5Ux-ZC-5d6">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="21"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="335" height="21"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="G4f-s4-skd"/>
                                         </constraints>
@@ -62,10 +62,10 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="p6H-Dv-0NH">
-                                        <rect key="frame" x="0.0" y="31.333333333333371" width="374" height="2"/>
+                                        <rect key="frame" x="0.0" y="31.333333333333371" width="335" height="2"/>
                                     </progressView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="sUD-29-NbB">
-                                        <rect key="frame" x="0.0" y="38.333333333333371" width="374" height="32"/>
+                                        <rect key="frame" x="0.0" y="38.333333333333371" width="335" height="32"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JZD-eA-yI5">
                                                 <rect key="frame" x="0.0" y="0.0" width="51" height="32"/>
@@ -76,7 +76,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SFk-wi-8H9">
-                                                <rect key="frame" x="147.66666666666666" y="0.0" width="79" height="32"/>
+                                                <rect key="frame" x="128" y="0.0" width="79" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                                                 <state key="normal" title="Start/Stop"/>
                                                 <connections>
@@ -84,7 +84,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RxJ-wt-6BC">
-                                                <rect key="frame" x="323" y="0.0" width="51" height="32"/>
+                                                <rect key="frame" x="284" y="0.0" width="51" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="16"/>
                                                 <state key="normal" title="Export"/>
                                                 <connections>
@@ -108,7 +108,14 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Video Frame Interpolation" id="9wO-1J-eOc"/>
+                    <navigationItem key="navigationItem" title="Video Frame Interpolation" id="9wO-1J-eOc">
+                        <barButtonItem key="rightBarButtonItem" title="Settings" image="Resolution" id="K4R-vL-5QF">
+                            <inset key="imageInsets" minX="0.0" minY="0.0" maxX="-12" maxY="-8"/>
+                            <connections>
+                                <action selector="setResolutionPressed:" destination="BYZ-38-t0r" id="7MY-4t-YTn"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="centerImageView" destination="s6e-D4-Ypz" id="u23-zm-gxn"/>
                         <outlet property="exportButton" destination="RxJ-wt-6BC" id="UUb-Hh-0j5"/>
@@ -130,7 +137,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="VAt-BV-WxP" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="qjo-Pz-XuN">
-                        <rect key="frame" x="0.0" y="20" width="414" height="44"/>
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -144,7 +151,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="left256" width="256" height="256"/>
-        <image name="right256" width="256" height="256"/>
+        <image name="Resolution" width="42.666667938232422" height="42.666667938232422"/>
     </resources>
 </document>

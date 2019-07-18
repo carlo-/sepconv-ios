@@ -28,7 +28,9 @@ class ViewController: UIViewController {
     
     private var videoWriter: VideoWriter?
     private var videoReader: VideoReader?
+    
     private var selectedVideoURL: URL?
+    private var selectedNetworkSize: SepConvNetworkSize = .x256
     
     private lazy var imagePickerController: UIImagePickerController = {
         let picker = UIImagePickerController()
@@ -129,6 +131,27 @@ class ViewController: UIViewController {
         self.state = state
     }
     
+    @IBAction func setResolutionPressed(_ sender: Any? = nil) {
+        
+        weak var wself = self
+        let current = selectedNetworkSize
+        let sheet = UIAlertController(
+            title: "Select Network Size",
+            message: "Maximum Image Size = Network Size - Filter Size",
+            preferredStyle: .actionSheet
+        )
+        
+        SepConvNetworkSize.allCases.forEach { size in
+            let title = (current == size ? "→ " : "") + size.description + (current == size ? " ←" : "")
+            sheet.addAction(UIAlertAction(title: title, style: .default) { _ in
+                wself?.selectedNetworkSize = size
+            })
+        }
+        
+        sheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(sheet, animated: true)
+    }
+    
     @IBAction func startStopPressed(_ sender: Any? = nil) {
         if state == .processing {
             stopInterpolation()
@@ -160,7 +183,7 @@ class ViewController: UIViewController {
         
         update(for: .processing)
         
-        let network = SepConvNetwork()
+        let network = SepConvNetwork(size: selectedNetworkSize)
         do {
             try network.prepare()
         } catch {
