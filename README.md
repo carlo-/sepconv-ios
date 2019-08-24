@@ -7,10 +7,11 @@ SepConv-iOS is a fully functioning iOS implementation of the paper [Video Frame 
 -------
 ## Known issues / limitations
 
-- 512x512
-- Clipping
-- align_angles property
-- Fixed input size
+- The input size is fixed as dictated by the ONNX format, which is why this repository contains 4 different models with different input sizes.
+- The model supporting 512x512 frames as input will use a considerable amount of memory during the forward pass. The larger model (1024x1024) will likely ran out of memory on most devices.
+- Artifacts (caused by clipping) may appear in the output.
+- The conversion of upsampling modules via ONNX is rather limited. The `align_angles` property must be set to `false` (see conversion script), and the `_convert_upsample` in `onnx_coreml/_operators.py` must be modified to support bilinear upsampling (simply add `"bilinear": "BILINEAR"` in the `mode_convert` dictionary).
+
 
 -------
 ## License
